@@ -43,7 +43,7 @@ namespace BugTracker
             services.AddMvc();
 
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
-            services.AddScoped<IEmailSender, EmailService>();
+            services.AddTransient<IEmailSender, EmailService>();
 
             services.AddScoped<IBTRoleService, BasicBTRoleService>();
             services.AddScoped<IBTProjectService, BasicBTProjectService>();

@@ -87,7 +87,7 @@ namespace BugTracker.Areas.Identity.Pages.Account
         public async Task OnGetAsync(string returnUrl = null)
         {
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
-
+            var test = _context.Company.Count();
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
