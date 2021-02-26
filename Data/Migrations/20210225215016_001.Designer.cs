@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BugTracker.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210225193607_001")]
+    [Migration("20210225215016_001")]
     partial class _001
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,6 +56,10 @@ namespace BugTracker.Data.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -137,6 +141,45 @@ namespace BugTracker.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Company");
+                });
+
+            modelBuilder.Entity("BugTracker.Models.Invite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("CompanyToken")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("InviteDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("InviteeId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("InvitorId")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsValid")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("InviteeId");
+
+                    b.HasIndex("InvitorId");
+
+                    b.ToTable("Invite");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Notification", b =>
@@ -558,6 +601,29 @@ namespace BugTracker.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("BugTracker.Models.Invite", b =>
+                {
+                    b.HasOne("BugTracker.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BugTracker.Models.BTUser", "Invitee")
+                        .WithMany()
+                        .HasForeignKey("InviteeId");
+
+                    b.HasOne("BugTracker.Models.BTUser", "Invitor")
+                        .WithMany()
+                        .HasForeignKey("InvitorId");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Invitee");
+
+                    b.Navigation("Invitor");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Notification", b =>

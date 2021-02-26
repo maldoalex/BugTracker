@@ -103,6 +103,7 @@ namespace BugTracker.Data.Migrations
                     Id = table.Column<string>(type: "text", nullable: false),
                     FirstName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    DisplayName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     AvatarFileName = table.Column<string>(type: "text", nullable: true),
                     AvatarFileData = table.Column<byte[]>(type: "bytea", nullable: true),
                     CompanyId = table.Column<int>(type: "integer", nullable: false),
@@ -236,6 +237,43 @@ namespace BugTracker.Data.Migrations
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Invite",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CompanyId = table.Column<int>(type: "integer", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    CompanyToken = table.Column<Guid>(type: "uuid", nullable: false),
+                    InviteDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    InvitorId = table.Column<string>(type: "text", nullable: true),
+                    InviteeId = table.Column<string>(type: "text", nullable: true),
+                    IsValid = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Invite", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Invite_AspNetUsers_InviteeId",
+                        column: x => x.InviteeId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Invite_AspNetUsers_InvitorId",
+                        column: x => x.InvitorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Invite_Company_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Company",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -494,6 +532,21 @@ namespace BugTracker.Data.Migrations
                 column: "ProjectsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Invite_CompanyId",
+                table: "Invite",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invite_InviteeId",
+                table: "Invite",
+                column: "InviteeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invite_InvitorId",
+                table: "Invite",
+                column: "InvitorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Notification_RecipientId",
                 table: "Notification",
                 column: "RecipientId");
@@ -593,6 +646,9 @@ namespace BugTracker.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "BTUserProject");
+
+            migrationBuilder.DropTable(
+                name: "Invite");
 
             migrationBuilder.DropTable(
                 name: "Notification");

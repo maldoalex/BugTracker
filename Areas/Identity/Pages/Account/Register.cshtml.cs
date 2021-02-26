@@ -7,13 +7,15 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using BugTracker.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using BugTracker.Data;
+using BugTracker.Models;
 
 namespace BugTracker.Areas.Identity.Pages.Account
 {
@@ -24,17 +26,20 @@ namespace BugTracker.Areas.Identity.Pages.Account
         private readonly UserManager<BTUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly ApplicationDbContext _context;
 
         public RegisterModel(
             UserManager<BTUser> userManager,
             SignInManager<BTUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
         }
 
         [BindProperty]
@@ -46,6 +51,22 @@ namespace BugTracker.Areas.Identity.Pages.Account
 
         public class InputModel
         {
+            public int CompanyId { get; set; }
+
+            [Required]
+            [StringLength(50, ErrorMessage = "The{0} must be at least {2} and no more than {1} characters long", MinimumLength = 2)]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [StringLength(50, ErrorMessage = "The{0} must be at least {2} and no more than {1} characters long", MinimumLength = 2)]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
+            [StringLength(50, ErrorMessage = "The{0} must be at least {2} and no more than {1} characters long", MinimumLength = 2)]
+            [Display(Name = "Display Name")]
+            public string DisplayName { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -65,6 +86,8 @@ namespace BugTracker.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -75,7 +98,15 @@ namespace BugTracker.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new BTUser { UserName = Input.Email, Email = Input.Email };
+                var user = new BTUser { 
+                    UserName = Input.Email, 
+                    Email = Input.Email,
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName,
+                    DisplayName = Input.DisplayName,
+                    CompanyId = Input.CompanyId
+                };
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
