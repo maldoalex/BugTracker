@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BugTracker.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace BugTracker
 {
@@ -40,6 +41,14 @@ namespace BugTracker
 
             //services.AddControllersWithViews();
             services.AddMvc();
+
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+            services.AddScoped<IEmailSender, EmailService>();
+
+            services.AddScoped<IBTRoleService, BasicBTRoleService>();
+            services.AddScoped<IBTProjectService, BasicBTProjectService>();
+
+            services.AddScoped<IBTHistoryService, BasicBTHistoryService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
