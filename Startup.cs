@@ -47,6 +47,7 @@ namespace BugTracker
 
             services.AddScoped<IBTRoleService, BasicBTRoleService>();
             services.AddScoped<IBTProjectService, BasicBTProjectService>();
+            services.AddScoped<IBTTicketService, BasicBTTicketService>();
 
             services.AddScoped<IBTHistoryService, BasicBTHistoryService>();
         }
