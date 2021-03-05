@@ -1,7 +1,9 @@
 ﻿using BugTracker.Data;
 using BugTracker.Models;
+using BugTracker.Models.ViewModels;
 using BugTracker.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -30,8 +32,24 @@ namespace BugTracker.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            DashboardViewModel model = new DashboardViewModel();
+            var tickets = _dbContext.Ticket
+                .Include(t => t.TicketStatus)
+                .Include(t => t.TicketPriority)
+                .ToList();
+
+            var projects = _dbContext.Project
+                .Include(p => p.Company)
+                .Include(p => p.Members)
+                .ToList();
+
+            model.Tickets = tickets;
+            model.Projects = projects;
+
+            return View(model);
         }
+
+       
 
         public IActionResult Privacy()
         {

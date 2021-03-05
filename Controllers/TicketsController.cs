@@ -9,23 +9,29 @@ using BugTracker.Data;
 using BugTracker.Models;
 using BugTracker.Services;
 using BugTracker.Data.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Controllers
 {
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<BTUser> _userManager;
+
         private readonly IBTProjectService _projectService;
         private readonly IBTRoleService _roleService;
 
         public TicketsController(
             ApplicationDbContext context,
+            UserManager<BTUser> userManager,
             IBTProjectService projectService,
             IBTRoleService roleService)
         {
             _context = context;
             _projectService = projectService;
             _roleService = roleService;
+            _userManager = userManager;
+
         }
 
         public async Task<IActionResult> ManageUsersOnTicket()
@@ -70,6 +76,54 @@ namespace BugTracker.Controllers
             var applicationDbContext = _context.Ticket.Include(t => t.DeveloperUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
             return View(await applicationDbContext.ToListAsync());
         }
+
+
+
+
+        // GET: Tickets
+        public async Task<IActionResult> MyTickets()
+        {
+
+            var model = new List<Ticket>();
+            //Test if ADMIN
+            if (User.IsInRole("Admin"))
+            {
+                model = await _context.Ticket
+                    .Include(t => t.DeveloperUser)
+                    .Include(t => t.OwnerUser)
+                    .Include(t => t.Project)
+                    .Include(t => t.TicketPriority)
+                    .Include(t => t.TicketStatus)
+                    .Include(t => t.TicketType).ToListAsync();
+            }
+            //Test if Project Manager
+
+            else if (User.IsInRole("ProjectManager"))
+            {
+                var userId = _userManager.GetUserId(User);
+                var projects = await _projectService.ListUserProjectsAsync(userId);
+
+                model = projects.SelectMany(p => p.Tickets).ToList();
+            }
+            //Test if Developer
+            else if (User.IsInRole("Developer"))
+            {
+                var userId = _userManager.GetUserId(User);
+                model = _context.Ticket.Where(t => t.DeveloperUserId == userId).ToList();
+            }
+            //Test if Owner
+            else
+            {
+                var userId = _userManager.GetUserId(User);
+                model = _context.Ticket.Where(t => t.OwnerUserId == userId).ToList();
+            }
+
+            return View(model);
+        }
+
+
+
+
 
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
