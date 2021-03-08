@@ -77,6 +77,27 @@ namespace BugTracker.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        // Notifications: Go To Tickets
+        public async Task<IActionResult> GoToTicket(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var notification = await _context.Notification.FindAsync((int)id);
+
+            if (notification == null)
+            {
+                return NotFound();
+            }
+
+            notification.Viewed = true;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = notification.TicketId });
+        }
+
 
 
 

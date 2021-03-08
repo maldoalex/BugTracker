@@ -52,5 +52,28 @@ namespace BugTracker.Controllers
             }
             return Json(result);
         }
+
+        public JsonResult StatusChart()
+        {
+            var result = new ChartJSModel();
+            var statuses = _context.TicketStatus.ToList();
+            int count = 0;
+            foreach (var status in statuses)
+            {
+                result.Labels.Add(status.Name);
+                result.Data.Add(_context.Ticket.Where(t => t.TicketStatusId == status.Id).Count());
+                if (count < 10)
+                {
+                    result.BackgroundColors.Add(_backgroundColors[count]);
+                }
+                else
+                {
+                    result.BackgroundColors.Add(_backgroundColors[count % 10]);
+
+                }
+                count++;
+            }
+            return Json(result);
+        }
     }
 }
