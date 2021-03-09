@@ -86,6 +86,11 @@ namespace BugTracker.Areas.Identity.Pages.Account
                 var password = _configuration["DemoPassword"];
                 var result = await _signInManager.PasswordSignInAsync(email, password, false, lockoutOnFailure: false);
 
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User logged in.");
+                    return RedirectToAction("Dashboard", "Home");
+                }
             }
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -98,7 +103,7 @@ namespace BugTracker.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    return RedirectToAction("Dashboard", "Home");
                 }
                 if (result.RequiresTwoFactor)
                 {

@@ -1,191 +1,79 @@
-﻿@model BugTracker.Models.ViewModels.DashboardViewModel
-
+﻿
 @{
-    ViewData["Title"] = "Home Page";
+Layout = null;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Bug Tracker</h1>
-    <p>A web application that allows employees to submit tickets in relation to a problem/issue within the company. <br />The administrator, or perspective managers, then have the ability to assign, modify and address the tasks at hand.</p>
-</div>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Bug Tracker | Landing Page</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/webfonts/all.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+    <!-- Tempusdominus Bbootstrap 4 -->
+    <link rel="stylesheet" href="~/css/tempusdominus-bootstrap-4.min.css">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="~/css/icheck-bootstrap.min.css">
+    <!-- JQVMap -->
+    <link rel="stylesheet" href="~/css/jqvmap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/css/adminlte.min.css">
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="~/css/OverlayScrollbars.min.css">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" href="~/css/daterangepicker.css">
+    <!-- summernote -->
+    <link rel="stylesheet" href="~/css/summernote-bs4.css">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/030dc5bcf6.js" crossorigin="anonymous"></script>
 
 
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col">
-                </div><!-- /.col -->
-            </div><!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <!-- Small boxes (Stat box) -->
-            <div class="row">
-                <div class="col">
-                    <!-- small box -->
-                    <div class="small-box bg-info">
-                        <div class="inner">
-
-                            <p>New Tickets</p>
-                            <p>@Model.Tickets.Where(t => t.TicketStatus.Name == "New").Count()</p>
-                        </div>
-                        @*<div class="icon">
-                                <i class="ion ion-bag"></i>
-                            </div>*@
-                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col">
-                    <!-- small box -->
-                    <div class="small-box bg-success">
-                        <div class="inner">
-
-                            <p>Resolved Tickets</p>
-                            <p>@Model.Tickets.Where(t => t.TicketStatus.Name == "Closed").Count()</p>
-                        </div>
-                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col">
-                    <!-- small box -->
-                    <div class="small-box bg-warning">
-                        <div class="inner">
-
-                            <p>High Priority</p>
-                            <p>@Model.Tickets.Where(t => t.TicketPriority.Name == "High").Count()</p>
-                        </div>
-                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col">
-                    <!-- small box -->
-                    <div class="small-box bg-danger">
-                        <div class="inner">
-
-                            <p>Urgent Priority</p>
-                            <p>@Model.Tickets.Where(t => t.TicketPriority.Name == "Urgent").Count()</p>
-                        </div>
-                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
+</head>
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <div class="card">
+                <a class="btn text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                <a class="btn text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
             </div>
-            <!-- /.row -->
-            <!-- Main row -->
-            <div class="row">
-
-                <!-- right col (We are only adding the ID to make the widgets sortable)-->
-                <section class="col connectedSortable">
-                    <!-- Tickets-->
-                    <div class="card">
-                        <div class="card-header border-0">
-                            <h3 class="card-title">Projects</h3>
-                        </div>
-                        <div class="card-body table-responsive p-0">
-                            <table class="table table-striped table-valign-middle">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <th>Company</th>
-                                        <th>Team Members</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var project in Model.Projects)
-                                    {
-                                        <tr>
-                                            <td>@project.Name</td>
-                                            <td>@project.Description</td>
-                                            <td>@project.Company.Name</td>
-                                            <td>
-                                                @foreach (var member in project.Members)
-                                                {
-                                                    <p>@member.FullName</p>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <!-- /.card -->
-                    <!-- /.card -->
-
-                </section>
-                <!-- right col -->
-            </div>
-            <!-- /.row (main row) -->
-        </div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-</div>
-
-
-
-
-<div class="row">
-    <div class="col-md-8">
-        <canvas id="myChart" width="400" height="400"></canvas>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-8">
-        <canvas id="myChart2" width="400" height="400"></canvas>
+        </div>
     </div>
 </div>
 
 
-@section Scripts {
-
-
-    <script>
-    var Url3 = '@Url.Action("PriorityChart", "Charts")';
-    $.post(Url3).then(function (response) {
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var barChartData = {
-            labels: response.labels,
-            datasets: [{
-                label: "Status",
-                data: response.data,
-                backgroundColor: response.backgroundColors,
-                hoverOffset: 4
-            }]
-        };
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: barChartData
-        })
-    })
-
-        var Url2 = '@Url.Action("StatusChart", "Charts")';
-    $.post(Url2).then(function (response) {
-        var ctx = document.getElementById('myChart2').getContext('2d');
-        var doughnutChartData = {
-            labels: response.labels,
-            datasets: [{
-                label: "Status",
-                data: response.data,
-                backgroundColor: response.backgroundColors,
-                hoverOffset: 4
-            }]
-        };
-        var myChart2 = new Chart(ctx, {
-            type: 'doughnut',
-            data: doughnutChartData
-        })
-    })
-    </script>
-}
-
+<!-- jQuery -->
+<script src="~/js/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="~/js/jquery-ui.min.js"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+    $.widget.bridge('uibutton', $.ui.button)
+</script>
+<!-- Bootstrap 4 -->
+<script src="~/js/bootstrap.bundle.min.js"></script>
+<!-- ChartJS -->
+<script src="~/js/Chart.min.js"></script>
+<!-- Sparkline -->
+<script src="~/js/sparkline.js"></script>
+<!-- jQuery Knob Chart -->
+<script src="~/js/jquery.knob.min.js"></script>
+<!-- daterangepicker -->
+<script src="~/js/moment.min.js"></script>
+<script src="~/js/daterangepicker.js"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="~/js/tempusdominus-bootstrap-4.min.js"></script>
+<!-- Summernote -->
+<script src="~/js/summernote-bs4.min.js"></script>
+<!-- overlayScrollbars -->
+<script src="~/js/jquery.overlayScrollbars.min.js"></script>
+<!-- AdminLTE App -->
+<script src="~/js/adminlte.js"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script src="~/js/dashboard.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="~/js/demo.js"></script>

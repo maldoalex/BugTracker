@@ -30,7 +30,7 @@ namespace BugTracker.Controllers
             _dbContext = dbContext;
         }
 
-        public IActionResult Index()
+        public IActionResult Dashboard()
         {
             DashboardViewModel model = new DashboardViewModel();
             var tickets = _dbContext.Ticket
@@ -49,7 +49,10 @@ namespace BugTracker.Controllers
             return View(model);
         }
 
-       
+        public IActionResult Index()
+        {
+            return View();
+        }
 
         public IActionResult Privacy()
         {

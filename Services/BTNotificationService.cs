@@ -25,10 +25,10 @@ namespace BugTracker.Services
         {
             var user = await _userManager.GetUserAsync(currentUser);
 
-            var userNotifications = _context.Notification.Where(n => n.RecipientId == user.Id);
-            var unreadNotifications = await userNotifications.Where(n => !n.Viewed).ToListAsync();
+            var userNotifications = await _context.Notification.Where(n => n.RecipientId == user.Id && !n.Viewed).ToListAsync();
+            //var unreadNotifications = await userNotifications.Where(n => !n.Viewed).ToListAsync();
 
-            return unreadNotifications;
+            return userNotifications;
         }
     }
 }
