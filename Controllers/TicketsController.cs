@@ -17,20 +17,45 @@ namespace BugTracker.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
-
+        private readonly IBTInviteService _inviteService;
         private readonly IBTProjectService _projectService;
         private readonly IBTRoleService _roleService;
+        private readonly SignInManager<BTUser> _signInManager;
 
         public TicketsController(
             ApplicationDbContext context,
             UserManager<BTUser> userManager,
+            IBTInviteService inviteService,
             IBTProjectService projectService,
-            IBTRoleService roleService)
+            IBTRoleService roleService,
+            SignInManager<BTUser> signInManager)
         {
             _context = context;
             _projectService = projectService;
             _roleService = roleService;
+            _signInManager = signInManager;
             _userManager = userManager;
+            _inviteService = inviteService;
+        }
+
+        public async Task<IActionResult> AcceptInvite(string userId, string code)
+        {
+            var realGuid = Guid.Parse(code);
+            var invite = _context.Invite.FirstOrDefault(i => i.CompanyToken == realGuid && i.InviteeId == userId);
+            if(invite is null)
+            {
+                return NotFound();
+            }
+            if (invite.IsValid)
+            {
+                invite.IsValid = false;
+                var user = await _context.Users.FindAsync(userId);
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Create");
+            }
+            return NotFound();
 
         }
 

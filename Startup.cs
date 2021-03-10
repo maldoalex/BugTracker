@@ -52,6 +52,8 @@ namespace BugTracker
             services.AddScoped<IBTHistoryService, BasicBTHistoryService>();
 
             services.AddScoped<IBTNotificationService, BTNotificationService>();
+            services.AddScoped<IBTInviteService, BTInviteService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
